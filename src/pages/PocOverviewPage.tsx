@@ -1,10 +1,3 @@
-import PagePlaceholder from '../components/PagePlaceholder';
+import HomePage from './HomePage';
 
-export default function PocOverviewPage() {
-  return (
-    <PagePlaceholder
-      title="POC Overview"
-      description="Proof-of-concept scope, assumptions, and implementation status will be summarized here."
-    />
-  );
-}
+export default HomePage;

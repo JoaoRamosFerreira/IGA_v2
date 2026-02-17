@@ -1,10 +1,3 @@
-import PagePlaceholder from '../components/PagePlaceholder';
+import CampaignHistoryPage from './CampaignHistoryPage';
 
-export default function ReviewHistoryPage() {
-  return (
-    <PagePlaceholder
-      title="Review History"
-      description="Historical campaign outcomes and reviewer decisions will be tracked here."
-    />
-  );
-}
+export default CampaignHistoryPage;

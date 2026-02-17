@@ -1,59 +1,70 @@
-# IGA Platform (React + Tailwind + Supabase)
+# Automated IGA Platform (Prompt-Aligned POC)
 
-## Setup
+This repository is now aligned to the requested prompt set for an end-to-end IGA proof-of-concept.
 
-1. Copy `.env.example` to `.env` and fill in Supabase credentials.
+## Implemented Structure
+
+### Auth & Access Control
+- Email signup/login via Supabase Auth.
+- Role/status profile model (`user_profiles`) with `pending`, `active`, `suspended` states.
+- Admins managed by `app_admins` table.
+- Dedicated pages:
+  - `/auth`
+  - `/pending-approval`
+  - `/suspended`
+
+### Dashboard Layout
+- Sidebar sections for users:
+  - Home, My Reviews, My Assets, Campaign History, Changelog.
+- Admin-only sidebar sections:
+  - Employees, Assets, Campaigns, Reviews, Audit Items, User Directory, Admins,
+    Data Import, Notifications, Audit Logs, Settings, Help Settings.
+
+### Data Model Highlights (`supabase/schema.sql`)
+- `app_admins`, `user_profiles`
+- `employees` (prompt fields + manual override flag)
+- `assets` (prompt fields + cached user count / NHI / manual override)
+- `campaigns`, `reviews`, `review_items` (Keep/Revoke + Human/NHI)
+- `notification_rules`, `notification_logs`
+- `settings` (Okta auto-revocation + retention controls)
+- `help_settings`, `help_faq_items`
+- `audit_logs`, `error_logs`
+
+### Review Interface
+- My Reviews page supports:
+  - assigned pending review items
+  - Keep/Revoke decisions
+  - evidence notes
+  - delegation for pending assignments
+  - simple completion confetti state
+
+### Integration Edge Functions (Scaffold + Core Stubs)
+- Okta: `fetch-okta-groups`, `fetch-okta-users`, `revoke-okta-access`, `test-okta-connection`
+- BambooHR: `sync-employees-bamboohr`, `test-bamboohr-connection`
+- Google Sheets: `sync-google-sheets-assets`, `sync-google-sheets-review-items`
+- Slack: `send-slack-notification`, `fetch-slack-ids`
+- Jobs: `run-daily-jobs`, `scheduler-watchdog`
+
+## Local Setup
+
+1. Copy `.env.example` to `.env` and set Supabase credentials.
 2. Install dependencies: `npm install`
-3. Run the app: `npm run dev`
-4. Apply `supabase/schema.sql` in Supabase SQL editor.
+3. Apply DB schema from `supabase/schema.sql`.
+4. Run app: `npm run dev`
 
-## Included
-
-- Supabase auth client wiring (`src/lib/supabase.ts`)
-- `admin` / `user` profile roles in `profiles` table and creation trigger.
-- Full database schema requested for IGA entities.
-- Persistent sidebar nav and placeholder pages for:
-  - Dashboard
-  - My Reviews
-  - Review History
-  - Assets
-  - Employees
-  - Settings
-  - POC Overview
-
-## Settings Page Details
-
-- Settings page reads and updates the singleton `system_settings` row with `id=1`.
-- Integrations tab includes BambooHR (Employees + Contractors), Okta, and Slack cards.
-- General tab includes an editor for `nhi_types` JSON array values.
-- Secret fields are masked and show a hint with the final 3 characters when configured.
-- BambooHR and Okta cards include "Test Connection" actions that invoke Supabase Edge Functions:
-  - `test-bamboohr-connection`
-  - `test-okta-connection`
-
-
-
-## Assets + Okta Deep Dive
-
-- Assets page now lists all `assets` table rows in a table and includes a `+ Create Asset` modal (Name, Owner Email, Type, RBAC URL, Okta ID).
-- Clicking an asset opens a deep-dive drawer. If `okta_id` exists, the UI calls the `fetch-okta-groups` edge function.
-- Drawer displays an accordion of Okta Groups -> Users with user avatars.
-- Each group header includes a `Privileged Access` toggle that persists the group ID into `assets.privileged_group_ids` JSONB.
-
-## Employee Directory + Sync Engine
-
-- `sync-employees-bamboohr` edge function supports payload `{ target: 'employees' | 'contractors' | 'all' }`.
-- Reads BambooHR settings from `system_settings` and fetches custom reports for employees/contractors.
-- Maps BambooHR data into `employees` table and mirrors records by deleting rows not present in the fetched data for mirrored worker types.
-- `fetch-slack-ids` edge function fetches Slack workspace users and updates `employees.slack_id` by matching on email.
-- Employees page includes tabs for Employees/Contractors and a manual "Sync Slack IDs" trigger.
-
-### Deploy edge functions
+## Deploy Edge Functions
 
 ```bash
-supabase functions deploy test-bamboohr-connection
+supabase functions deploy fetch-okta-groups
+supabase functions deploy fetch-okta-users
+supabase functions deploy revoke-okta-access
 supabase functions deploy test-okta-connection
 supabase functions deploy sync-employees-bamboohr
+supabase functions deploy test-bamboohr-connection
+supabase functions deploy sync-google-sheets-assets
+supabase functions deploy sync-google-sheets-review-items
+supabase functions deploy send-slack-notification
 supabase functions deploy fetch-slack-ids
-supabase functions deploy fetch-okta-groups
+supabase functions deploy run-daily-jobs
+supabase functions deploy scheduler-watchdog
 ```
