@@ -1,13 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Dashboard', to: '/' },
+  { label: 'POC Overview', to: '/' },
+  { label: 'Dashboard', to: '/dashboard' },
   { label: 'My Reviews', to: '/my-reviews' },
   { label: 'Review History', to: '/review-history' },
   { label: 'Assets', to: '/assets' },
   { label: 'Employees', to: '/employees' },
   { label: 'Settings', to: '/settings' },
-  { label: 'POC Overview', to: '/poc-overview' },
 ];
 
 export default function SidebarLayout() {

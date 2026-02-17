@@ -12,13 +12,14 @@ export default function App() {
   return (
     <Routes>
       <Route element={<SidebarLayout />}>
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/" element={<PocOverviewPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/my-reviews" element={<MyReviewsPage />} />
         <Route path="/review-history" element={<ReviewHistoryPage />} />
         <Route path="/assets" element={<AssetsPage />} />
         <Route path="/employees" element={<EmployeesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/poc-overview" element={<PocOverviewPage />} />
+        <Route path="/poc-overview" element={<Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
