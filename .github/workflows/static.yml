@@ -43,13 +43,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Vite outputs the build to the 'dist' folder by default
+          # This is the key change: upload the BUILT files, not the source
           path: './dist' 
 
       - name: Deploy to GitHub Pages
