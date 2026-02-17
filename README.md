@@ -31,6 +31,15 @@
   - `test-bamboohr-connection`
   - `test-okta-connection`
 
+
+
+## Assets + Okta Deep Dive
+
+- Assets page now lists all `assets` table rows in a table and includes a `+ Create Asset` modal (Name, Owner Email, Type, RBAC URL, Okta ID).
+- Clicking an asset opens a deep-dive drawer. If `okta_id` exists, the UI calls the `fetch-okta-groups` edge function.
+- Drawer displays an accordion of Okta Groups -> Users with user avatars.
+- Each group header includes a `Privileged Access` toggle that persists the group ID into `assets.privileged_group_ids` JSONB.
+
 ## Employee Directory + Sync Engine
 
 - `sync-employees-bamboohr` edge function supports payload `{ target: 'employees' | 'contractors' | 'all' }`.
@@ -46,4 +55,5 @@ supabase functions deploy test-bamboohr-connection
 supabase functions deploy test-okta-connection
 supabase functions deploy sync-employees-bamboohr
 supabase functions deploy fetch-slack-ids
+supabase functions deploy fetch-okta-groups
 ```
