@@ -44,6 +44,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          # This ensures we only upload the production build
           path: './dist'
 
       - name: Deploy to GitHub Pages
