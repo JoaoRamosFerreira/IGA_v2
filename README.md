@@ -33,6 +33,20 @@
 
 
 
+
+
+## Review Campaign Generation
+
+- Dashboard includes a multi-step Create Campaign wizard:
+  - Step 1: campaign name + start/due dates
+  - Step 2: scope selection (`all_assets` or searchable multi-select specific assets)
+- `generate-review-campaign` edge function executes strict Okta-based generation:
+  - For each in-scope asset with `okta_id`, fetch app groups and current group users from Okta
+  - Create `review_items` for each user with:
+    - `reviewer_email = asset.owner_email`
+    - `status = pending`
+    - `okta_group = group name`
+
 ## Assets + Okta Deep Dive
 
 - Assets page now lists all `assets` table rows in a table and includes a `+ Create Asset` modal (Name, Owner Email, Type, RBAC URL, Okta ID).
@@ -56,4 +70,5 @@ supabase functions deploy test-okta-connection
 supabase functions deploy sync-employees-bamboohr
 supabase functions deploy fetch-slack-ids
 supabase functions deploy fetch-okta-groups
+supabase functions deploy generate-review-campaign
 ```
