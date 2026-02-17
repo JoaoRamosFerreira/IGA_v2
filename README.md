@@ -20,3 +20,30 @@
   - Employees
   - Settings
   - POC Overview
+
+## Settings Page Details
+
+- Settings page reads and updates the singleton `system_settings` row with `id=1`.
+- Integrations tab includes BambooHR (Employees + Contractors), Okta, and Slack cards.
+- General tab includes an editor for `nhi_types` JSON array values.
+- Secret fields are masked and show a hint with the final 3 characters when configured.
+- BambooHR and Okta cards include "Test Connection" actions that invoke Supabase Edge Functions:
+  - `test-bamboohr-connection`
+  - `test-okta-connection`
+
+## Employee Directory + Sync Engine
+
+- `sync-employees-bamboohr` edge function supports payload `{ target: 'employees' | 'contractors' | 'all' }`.
+- Reads BambooHR settings from `system_settings` and fetches custom reports for employees/contractors.
+- Maps BambooHR data into `employees` table and mirrors records by deleting rows not present in the fetched data for mirrored worker types.
+- `fetch-slack-ids` edge function fetches Slack workspace users and updates `employees.slack_id` by matching on email.
+- Employees page includes tabs for Employees/Contractors and a manual "Sync Slack IDs" trigger.
+
+### Deploy edge functions
+
+```bash
+supabase functions deploy test-bamboohr-connection
+supabase functions deploy test-okta-connection
+supabase functions deploy sync-employees-bamboohr
+supabase functions deploy fetch-slack-ids
+```

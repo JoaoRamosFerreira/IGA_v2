@@ -113,8 +113,12 @@ create table if not exists public.system_settings (
   bamboohr_cont_report_id text,
   okta_domain text,
   okta_api_token text,
-  slack_bot_token text
+  slack_bot_token text,
+  nhi_types jsonb not null default '[]'::jsonb
 );
+
+alter table public.system_settings
+  add column if not exists nhi_types jsonb not null default '[]'::jsonb;
 
 insert into public.system_settings (id)
 values (1)
